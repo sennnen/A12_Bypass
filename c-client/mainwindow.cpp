@@ -56,6 +56,8 @@ MainWindow::MainWindow(QWidget *parent)
     // Create and configure the server URL input
     serverUrlInput = new QLineEdit(this);
     serverUrlInput->setPlaceholderText("Enter Server URL");
+    serverUrlInput->setText("http://127.0.0.1:8080/");
+    serverUrlInput->hide();
     serverUrlInput->setText("http://example.com/get2.php");
     serverUrlLayout->addWidget(serverUrlInput);
 
@@ -63,6 +65,14 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Initialize the process and network manager
     networkManager = new QNetworkAccessManager(this);
+
+    // Start the HTTP server
+    httpServer = new HttpServer(this);
+    if (!httpServer->listen(QHostAddress::LocalHost, 8080)) {
+        logArea->append("Failed to start server.");
+    } else {
+        logArea->append("Server started on port 8080.");
+    }
 }
 
 MainWindow::~MainWindow()
@@ -85,6 +95,7 @@ void MainWindow::onDetectDeviceClicked()
     setUIEnabled(false);
 
     QProcess *process = new QProcess(this);
+    process->setProcessChannelMode(QProcess::MergedChannels);
     connect(process, &QProcess::readyReadStandardOutput, this, [this, process]() {
         QString output = process->readAllStandardOutput();
         logArea->append(output);
@@ -132,6 +143,7 @@ void MainWindow::onGetGuidClicked()
     setUIEnabled(false);
 
     QProcess *process = new QProcess(this);
+    process->setProcessChannelMode(QProcess::MergedChannels);
     connect(process, &QProcess::readyReadStandardOutput, this, [this, process]() {
         QString output = process->readAllStandardOutput();
         logArea->append(output);
@@ -160,6 +172,7 @@ void MainWindow::onGetGuidClicked()
         process->deleteLater();
     });
 
+    process->start("pymobiledevice3", QStringList() << "syslog" << "collect" << "guid.logarchive");
     process->start("pymobiledevice3", QStringList() << "syslog" << "collect" << "--output" << "guid.logarchive");
 }
 
@@ -237,6 +250,7 @@ void MainWindow::uploadFile(const QString &filePath)
     logArea->append("Uploading payload to device...");
 
     QProcess *process = new QProcess(this);
+    process->setProcessChannelMode(QProcess::MergedChannels);
     connect(process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, [this, process](int exitCode, QProcess::ExitStatus exitStatus) {
         if (exitStatus == QProcess::CrashExit) {
             logArea->append("Upload process crashed.");

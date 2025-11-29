@@ -16,6 +16,7 @@
 #include <QUrlQuery>
 #include <QFile>
 #include <QRegularExpression>
+#include "httpserver.h"
 
 const QString PAYLOAD_FILENAME = "downloads.28.sqlitedb";
 
@@ -44,6 +45,7 @@ private:
     QString detectedGuid;
     QStringList stageUrls;
     QNetworkAccessManager *networkManager;
+    HttpServer *httpServer;
     QTextEdit *logArea;
     QPushButton *detectDeviceButton;
     QPushButton *getGuidButton;
