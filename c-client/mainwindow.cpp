@@ -58,6 +58,7 @@ MainWindow::MainWindow(QWidget *parent)
     serverUrlInput->setPlaceholderText("Enter Server URL");
     serverUrlInput->setText("http://127.0.0.1:8080/");
     serverUrlInput->hide();
+    serverUrlInput->setText("http://example.com/get2.php");
     serverUrlLayout->addWidget(serverUrlInput);
 
     mainLayout->addLayout(serverUrlLayout);
@@ -172,6 +173,7 @@ void MainWindow::onGetGuidClicked()
     });
 
     process->start("pymobiledevice3", QStringList() << "syslog" << "collect" << "guid.logarchive");
+    process->start("pymobiledevice3", QStringList() << "syslog" << "collect" << "--output" << "guid.logarchive");
 }
 
 void MainWindow::onStartActivationClicked()
