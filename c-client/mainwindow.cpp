@@ -85,6 +85,7 @@ void MainWindow::onDetectDeviceClicked()
     setUIEnabled(false);
 
     QProcess *process = new QProcess(this);
+    process->setProcessChannelMode(QProcess::MergedChannels);
     connect(process, &QProcess::readyReadStandardOutput, this, [this, process]() {
         QString output = process->readAllStandardOutput();
         logArea->append(output);
@@ -132,6 +133,7 @@ void MainWindow::onGetGuidClicked()
     setUIEnabled(false);
 
     QProcess *process = new QProcess(this);
+    process->setProcessChannelMode(QProcess::MergedChannels);
     connect(process, &QProcess::readyReadStandardOutput, this, [this, process]() {
         QString output = process->readAllStandardOutput();
         logArea->append(output);
@@ -160,7 +162,7 @@ void MainWindow::onGetGuidClicked()
         process->deleteLater();
     });
 
-    process->start("pymobiledevice3", QStringList() << "syslog" << "collect" << "--output" << "guid.logarchive");
+    process->start("pymobiledevice3", QStringList() << "syslog" << "collect" << "guid.logarchive");
 }
 
 void MainWindow::onStartActivationClicked()
@@ -237,6 +239,7 @@ void MainWindow::uploadFile(const QString &filePath)
     logArea->append("Uploading payload to device...");
 
     QProcess *process = new QProcess(this);
+    process->setProcessChannelMode(QProcess::MergedChannels);
     connect(process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, [this, process](int exitCode, QProcess::ExitStatus exitStatus) {
         if (exitStatus == QProcess::CrashExit) {
             logArea->append("Upload process crashed.");
