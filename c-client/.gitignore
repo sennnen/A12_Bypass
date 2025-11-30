@@ -1,0 +1,9 @@
+# Build artifacts
+Makefile
+*.o
+moc_*.cpp
+moc_predefs.h
+iActivator
+
+# qmake
+.qmake.stash
